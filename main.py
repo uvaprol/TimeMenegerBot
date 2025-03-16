@@ -103,12 +103,17 @@ def bot_comand(message):
         STORAGE[chat_id]['Command'] = 'add'
         bot.send_message(chat_id, "Напишите новую задачу")
     elif message.text == "Удалить":
-        STORAGE[chat_id]['Command'] = 'del'
-        bot.send_message(chat_id, "Напишите номер задачи для удаления")
+        if STORAGE[chat_id]['Tasks'] != []:
+            STORAGE[chat_id]['Command'] = 'del'
+            bot.send_message(chat_id, "Напишите номер задачи для удаления")
+        else:
+            bot.send_message(chat_id, 'Задачи отутсвуют')
     elif message.text == "Запустить" and STORAGE[chat_id]['Status']:
         STORAGE[chat_id]['Command'] = 'None'
         if STORAGE[chat_id]['Tasks'] != []:
             run_task(chat_id, message.text)
+        else:
+            bot.send_message(chat_id, 'Задачи отутсвуют')
     elif message.text == "Посмотреть":
         STORAGE[chat_id]['Command'] = 'None'
         bot.send_message(chat_id, get_tasks(chat_id))
@@ -118,5 +123,8 @@ def bot_comand(message):
     elif STORAGE[chat_id]['Command'] == 'add':
         add_task(chat_id, message.text)
     elif STORAGE[chat_id]['Command'] == 'del':
-        del_task(chat_id, int(message.text))
+        try:
+            del_task(chat_id, int(message.text))
+        except:
+            bot.send_message(chat_id, 'Введит номер задачи')
 bot.polling()
