@@ -3,7 +3,7 @@ from telebot import types
 import time
 import threading
 
-API_TOKEN = '6228897236:AAHQtrWqaIZjTtRJykbYQK87Ukv2VCYTc6w'
+API_TOKEN = '7739685016:AAEZkA1dZ77pJ31TPPZGyal8CH0b22RZbgA'
 bot = telebot.TeleBot(API_TOKEN)
 STORAGE: dict = {'user': {'Status': 'isStart', 'Tasks': ['taskq', 'task2'], 'Command': 'None'}}
 stop_event = threading.Event()
