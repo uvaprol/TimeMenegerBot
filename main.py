@@ -10,16 +10,18 @@ stop_event = threading.Event()
 def send_delayed_message(chat_id: int, message: str, delay: int) -> None:
     time.sleep(delay)
     keyboard = telebot.types.InlineKeyboardMarkup()
-    button_save = telebot.types.InlineKeyboardButton(text="Да", callback_data='ready')
-    button_change = telebot.types.InlineKeyboardButton(text="Нет", callback_data='cooldown')
+    button_save = telebot.types.InlineKeyboardButton(text="Да",
+                                                     callback_data='ready')
+    button_change = telebot.types.InlineKeyboardButton(text="Нет",
+                                                       callback_data='cooldown')
     keyboard.add(button_save, button_change)
     bot.send_message(chat_id, message , reply_markup=keyboard)
 
 def run_task(chat_id: int, command: str) -> None:
     try:
         stop_event.clear()
-        delay = 25 if command == 'Начать' else 5 # Тестовый таймер
-        #delay = 25*60 if command == 'Начать' else 5*60
+        delay = 25 if command == 'Начать' else 5  # Тестовый таймер
+        # delay = 25*60 if command == 'Начать' else 5*60
         message = 'Успел?' if command == 'Запустить' else 'Начнем?'
         threading.Thread(target=send_delayed_message, args=(chat_id, message, delay)).start()
         STORAGE[chat_id]['Status'] = False
@@ -56,6 +58,7 @@ def del_task(chat_id: int, task_index: int) -> bool:
         return True
     except:
         return False
+
 def finish_task(chat_id: int) -> bool:
     global stop_event, STORAGE
     try:
@@ -117,7 +120,7 @@ def bot_comand(message):
     elif message.text == "Посмотреть":
         STORAGE[chat_id]['Command'] = 'None'
         bot.send_message(chat_id, get_tasks(chat_id))
-    elif message.text == "Закончить":
+    elif message.text == "Закончить" and not STORAGE[chat_id]['Status']:
         STORAGE[chat_id]['Command'] = 'None'
         finish_task(chat_id)
     elif STORAGE[chat_id]['Command'] == 'add':
@@ -127,4 +130,5 @@ def bot_comand(message):
             del_task(chat_id, int(message.text))
         except:
             bot.send_message(chat_id, 'Введит номер задачи')
+
 bot.polling()
